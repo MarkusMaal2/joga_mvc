@@ -33,4 +33,18 @@ Author.getArticles = (id, result) => {
     })
 }
 
+Author.getAll = (result) => {
+    let query = 'SELECT id, name FROM author';
+    con.query(query, (err, res) => {
+        if (err) {
+            console.log("error: ", err)
+            result(err, null)
+            return
+        }
+        if (res.length > 0) {
+            result(null, res)
+        }
+    })
+}
+
 module.exports = Author

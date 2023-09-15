@@ -6,6 +6,7 @@ const articleCtrl = require('../controllers/article')
 
 // use ctrl functions acc to route
 router.get('/', articleCtrl.getAllArticles);
+router.all('/article/edit/:id', articleCtrl.updateArticle);
 router.get('/article/create', articleCtrl.showNewArticleForm);
 router.get('/article/:slug', articleCtrl.getArticleBySlug);
 router.post('/create', articleCtrl.createNewArticle);

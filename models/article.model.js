@@ -1,6 +1,6 @@
 const con = require("../utils/db")
 
-const Article = (article) => {
+const Article = function (article) {
     this.name = article.name
     this.slug = article.slug
     this.body = article.body
@@ -21,6 +21,19 @@ Article.getAll = (result) => {
         articles = res
         console.log("articles: ", articles)
         result(null, articles)
+    })
+}
+
+Article.createNew = (newArticle, result) => {
+    let query = `INSERT INTO article (name, slug, image, body, published, author_id) VALUES ("${newArticle.name}", "${newArticle.slug}", "${newArticle.image}", "${newArticle.body}", "${newArticle.published}", ${newArticle.author_id})`
+    con.query(query, (err, res) => {
+        if (err) {
+            console.log("error: ", err)
+            result(err, null)
+            return
+        }
+        console.log("created article: ", {id: res.insertId, ...newArticle})
+        result(null, {id: res.insertId, ...newArticle})
     })
 }
 

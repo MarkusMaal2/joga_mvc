@@ -18,23 +18,6 @@ const showArticleForm = (req, res) => {
     })
 }
 
-// create new article (POST)
-const createNewArticle = (req, res) => {
-    // source: https://stackoverflow.com/questions/5129624/convert-js-date-time-to-mysql-datetime
-    let currentDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
-    let query = `INSERT INTO article (name, slug, image, body, published, author_id) VALUES ('${req.body.name}', '${req.body.slug}', '${req.body.image}', '${req.body.body}', '${currentDate}', ${req.body.author})`
-
-    Author.getAll((err, authordata) => {
-        con.query(query, (err, result) => {
-            if (err) throw err
-            res.render('create', {
-                message: "New article created successfully!",
-                authors: authordata
-            })
-        })
-    })
-}
-
 // show article update form
 const updateArticle = (req, res) => {
     if (req.method === "POST") {
@@ -86,6 +69,5 @@ const updateArticle = (req, res) => {
 // export ctrl functions
 module.exports = {
     showArticleForm,
-    updateArticle,
-    createNewArticle
+    updateArticle
 }

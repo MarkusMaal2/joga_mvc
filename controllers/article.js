@@ -59,17 +59,25 @@ const showNewArticleForm = (req, res) => {
 const updateArticle = (req, res) => {
     if (req.method === "POST") {
         // POST
-        let query = `UPDATE article
+        if (req.body.action !== "erase") {
+            let query = `UPDATE article
                          SET name='${req.body.name}',
                              slug='${req.body.slug}',
                              image='${req.body.image}',
                              body='${req.body.body}',
                              author_id=${req.body.author}
                          WHERE id = ${req.params.id}`;
-        con.query(query, (err, result) => {
-            if (err) throw err
-            res.redirect("/")
-        })
+            con.query(query, (err, result) => {
+                if (err) throw err
+                res.redirect("/")
+            })
+        } else {
+            let query = `DELETE FROM article WHERE id = ${req.params.id}`;
+            con.query(query, (err, result) => {
+                if (err) throw err
+                res.redirect("/")
+            })
+        }
     } else if (req.method === "GET") {
         // GET
         Article.getById(req.params.id, (err, data) => {

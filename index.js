@@ -22,8 +22,11 @@ app.use(express.urlencoded({extended: true}))
 
 const articleRoutes = require('./routes/article')
 const authorRoutes = require('./routes/author')
+const registerRoutes = require('./routes/register')
+
 app.use('/', articleRoutes)
 app.use('/author', authorRoutes)
+app.use('/', registerRoutes)
 
 
 app.listen(3010, () => {

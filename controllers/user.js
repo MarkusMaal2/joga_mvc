@@ -1,5 +1,7 @@
 const con = require("../utils/db");
 const User = require("../models/user.model")
+const bcrypt = require('bcrypt')
+const saltrounds = 5;
 
 const showRegisterForm = (req, res) => {
     res.render('register')
@@ -20,27 +22,39 @@ const showSessionTest = (req, res) => {
 }
 
 const verifyAndRegister = (req, res) => {
-    var firstName = req.body.firstName;
-    var lastName = req.body.lastName;
-    var userName = req.body.userName;
-    var password = req.body.password;
-
-    console.log("new user")
-    const newUser = {
-        firstname: firstName,
-        lastname: lastName,
-        username: userName,
-        password: password
-    }
-    User.registerUser(newUser, (err, data) => {
+    let firstName = req.body.firstName;
+    let lastName = req.body.lastName;
+    let userName = req.body.userName;
+    let password = req.body.password;
+    bcrypt.genSalt(saltrounds, (err, salt) => {
         if (err) {
-            res.status(500).send({
-                message : err.message || "Error occurred, while creating user"
-            })
-        } else {
-            console.log(data)
-            res.redirect('/')
+            console.log("salt error: "  + err)
         }
+        bcrypt.hash(password, salt, (err, hash) => {
+            if (err) {
+                console.log("hash error: " + err)
+            }
+            console.log("hash ok")
+            password = hash
+            console.log(password)
+            console.log("new user")
+            const newUser = {
+                firstname: firstName,
+                lastname: lastName,
+                username: userName,
+                password: password
+            }
+            User.registerUser(newUser, (err, data) => {
+                if (err) {
+                    res.status(500).send({
+                        message : err.message || "Error occurred, while creating user"
+                    })
+                } else {
+                    console.log(data)
+                    res.redirect('/login')
+                }
+            })
+        })
     })
 }
 
@@ -49,6 +63,7 @@ const verifyAndLogin = (req, res) => {
     let password = req.body.password;
     User.getUser(username, password, req, (err, data) => {
         if (err) {
+            console.log(err)
             res.status(401).send({
                 message : err.message || "Login failed, check credentials"
             })

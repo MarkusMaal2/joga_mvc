@@ -1,4 +1,5 @@
 const con = require("../utils/db")
+const bcrypt = require("bcrypt")
 
 const User = function (user)  {
     this.firstname = user.firstname
@@ -23,25 +24,33 @@ User.registerUser = (newUser, result) => {
 }
 
 User.getUser = (username, password, req, result) => {
-    let sql = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`
+    let sql = `SELECT * FROM users WHERE username = '${username}'`
     con.query(sql, (err, res) => {
-        console.log(res);
-        console.log(sql);
         if(err){
             console.log(err)
             result(err, null)
+            return
         } else if (Object.keys(res).length <= 0) {
-            console.log("wrong credentials")
-            result(err, null);
-        } else {
-            req.session.user = {
-                firstname: res[0].firstname, // get MySQL row data
-                lastname: res[0].lastname, // get MySQL row dataa
-                username: username,
-                password: password
-            }
-            result(null, null)
+            console.log("this user does not exist")
+            result(err, null)
+            return
         }
+        let hash = res[0].password
+        bcrypt.compare(password, hash, (err2, result2) => {
+            if (result2) {
+                console.log("Authentication successful!")
+                req.session.user = {
+                    firstname: res[0].firstname, // get MySQL row data
+                    lastname: res[0].lastname, // get MySQL row dataa
+                    username: username,
+                    password: password
+                }
+                result(null, null)
+            } else if (err2) {
+                console.log("Hashcheck fail: " + err2)
+                result(err2, null)
+            }
+        })
     })
 }
 

@@ -1,6 +1,18 @@
 const express = require('express')
 const app = express()
 
+const cookieParser = require("cookie-parser");
+const sessions = require('express-session');
+var parseUrl = require('body-parser');
+let encodeUrl = parseUrl.urlencoded({ extended: false });
+app.use(sessions({
+    secret: "thisismysecrctekey",
+    saveUninitialized:true,
+    cookie: { maxAge: 1000 * 60 * 60 * 24 }, // 24 hours
+    resave: false
+}));
+app.use(cookieParser());
+
 // add template engine
 const path = require('path')
 const hbs = require('express-handlebars')
@@ -22,11 +34,11 @@ app.use(express.urlencoded({extended: true}))
 
 const articleRoutes = require('./routes/article')
 const authorRoutes = require('./routes/author')
-const registerRoutes = require('./routes/register')
+const userRoutes = require('./routes/user')
 
 app.use('/', articleRoutes)
 app.use('/author', authorRoutes)
-app.use('/', registerRoutes)
+app.use('/', userRoutes)
 
 
 app.listen(3010, () => {

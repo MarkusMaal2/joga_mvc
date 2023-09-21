@@ -9,6 +9,14 @@ const showLoginForm = (req, res) => {
     res.render('login')
 }
 
+const showSessionTest = (req, res) => {
+    if (req.session.user) {
+        res.render('private', {
+            user: req.session.user
+        })
+    }
+}
+
 const verifyAndRegister = (req, res) => {
     var firstName = req.body.firstName;
     var lastName = req.body.lastName;
@@ -34,8 +42,26 @@ const verifyAndRegister = (req, res) => {
     })
 }
 
+const verifyAndLogin = (req, res) => {
+    let username = req.body.username;
+    let password = req.body.password;
+    User.getUser(username, password, req, (err, data) => {
+        if (err) {
+            res.status(401).send({
+                message : err.message || "Login failed, check credentials"
+            })
+        } else {
+            console.log(data);
+            console.log(req.session.user)
+            res.redirect('/session_test')
+        }
+    })
+}
+
 module.exports = {
     showRegisterForm,
     showLoginForm,
-    verifyAndRegister
+    verifyAndRegister,
+    verifyAndLogin,
+    showSessionTest
 }

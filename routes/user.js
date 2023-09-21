@@ -8,6 +8,8 @@ const userCtrl = require('../controllers/user')
 router.get('/register', userCtrl.showRegisterForm)
 router.post('/register', userCtrl.verifyAndRegister)
 router.get('/login', userCtrl.showLoginForm)
+router.post('/login', userCtrl.verifyAndLogin)
+router.get('/session_test', userCtrl.showSessionTest)
 
 // export router for use in def application file
 module.exports = router

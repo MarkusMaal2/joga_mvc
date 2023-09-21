@@ -7,6 +7,7 @@ const userCtrl = require('../controllers/user')
 // use ctrl functions acc to route
 router.get('/register', userCtrl.showRegisterForm)
 router.post('/register', userCtrl.verifyAndRegister)
+router.get('/login', userCtrl.showLoginForm)
 
 // export router for use in def application file
 module.exports = router

@@ -5,6 +5,10 @@ const showRegisterForm = (req, res) => {
     res.render('register')
 }
 
+const showLoginForm = (req, res) => {
+    res.render('login')
+}
+
 const verifyAndRegister = (req, res) => {
     var firstName = req.body.firstName;
     var lastName = req.body.lastName;
@@ -32,5 +36,6 @@ const verifyAndRegister = (req, res) => {
 
 module.exports = {
     showRegisterForm,
+    showLoginForm,
     verifyAndRegister
 }

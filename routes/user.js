@@ -10,6 +10,7 @@ router.post('/register', userCtrl.verifyAndRegister)
 router.get('/login', userCtrl.showLoginForm)
 router.post('/login', userCtrl.verifyAndLogin)
 router.get('/session_test', userCtrl.showSessionTest)
+router.get('/logout', userCtrl.sessionDestroy)
 
 // export router for use in def application file
 module.exports = router

@@ -60,10 +60,16 @@ const verifyAndLogin = (req, res) => {
     })
 }
 
+const sessionDestroy = (req, res) => {
+    req.session.destroy()
+    res.redirect('/login')
+}
+
 module.exports = {
     showRegisterForm,
     showLoginForm,
     verifyAndRegister,
     verifyAndLogin,
-    showSessionTest
+    showSessionTest,
+    sessionDestroy
 }

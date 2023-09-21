@@ -43,7 +43,8 @@ User.getUser = (username, password, req, result) => {
                     firstname: res[0].firstname, // get MySQL row data
                     lastname: res[0].lastname, // get MySQL row dataa
                     username: username,
-                    password: password
+                    hash: res[0].password,
+                    reg_date: res[0].reg_date
                 }
                 result(null, null)
             } else if (err2) {

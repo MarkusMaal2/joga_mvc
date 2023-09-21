@@ -14,6 +14,8 @@ const showSessionTest = (req, res) => {
         res.render('private', {
             user: req.session.user
         })
+    } else {
+        res.redirect("/login")
     }
 }
 

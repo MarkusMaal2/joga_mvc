@@ -95,10 +95,12 @@ const updateArticle = (req, res) => {
             Article.getById(req.params.id, (err, data) => {
                 if (err) {
                     res.status(500).send({message: err.message || "Error occurred while getting article data"})
+                    return
                 }
                 Author.getAll((err2, authors) => {
                     if (err2) {
                         res.status(500).send({message: err2.message || "Error occurred while getting author data"})
+                        return
                     }
                     res.render('edit', {article: data, authors: authors})
                 })

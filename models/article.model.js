@@ -51,7 +51,7 @@ Article.getBySlug = (slug, result) => {
             console.log("found article: " + res[0])
             result(null, res[0])
         } else {
-            result(null, null)
+            result({message: "Article not found"}, null)
         }
     })
 }
@@ -68,6 +68,8 @@ Article.getById = (id, result) => {
         if (res.length) {
             console.log("found article: " + res[0])
             result(null, res[0])
+        } else {
+            result ({message: "Article not found"}, null)
         }
     })
 }

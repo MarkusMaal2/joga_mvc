@@ -24,7 +24,12 @@ const getArticleBySlug = (req, res) => {
             })
         } else {
             console.log(data)
-            res.render('article', {article: data})
+            if (req.session.user) {
+                const edit = `/article/edit/${data.id}/`
+                res.render('article', {article: data, edit: edit})
+            } else {
+                res.render('article', {article: data, edit: ""})
+            }
         }
     })
 }

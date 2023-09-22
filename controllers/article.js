@@ -30,67 +30,82 @@ const getArticleBySlug = (req, res) => {
 }
 
 const createNewArticle = (req, res) => {
-    console.log("new article")
-    const newArticle = new Article({
-        name: req.body.name,
-        slug: req.body.slug,
-        image: req.body.image,
-        body: req.body.body,
-        published: new Date().toISOString().slice(0, 19).replace('T', ' '),
-        author_id: req.body.author_id
-    })
+    if (req.session.user) {
+        console.log("new article")
+        const newArticle = new Article({
+            name: req.body.name,
+            slug: req.body.slug,
+            image: req.body.image,
+            body: req.body.body,
+            published: new Date().toISOString().slice(0, 19).replace('T', ' '),
+            author_id: req.body.author_id
+        })
 
-    Article.createNew(newArticle, (err, data) => {
-        if (err) {
-            res.status(500).send({
-                message : err.message || "Error occurred, while sending article data"
-            })
-        } else {
-            console.log(data)
-            res.redirect('/')
-        }
-    })
+        Article.createNew(newArticle, (err, data) => {
+            if (err) {
+                res.status(500).send({
+                    message: err.message || "Error occurred, while sending article data"
+                })
+            } else {
+                console.log(data)
+                res.redirect('/')
+            }
+        })
+    } else {
+        // 401 = unauthorized
+        res.status(401).send({message: "Session inactive or expired. Please log in!"})
+    }
 }
 
 const showNewArticleForm = (req, res) => {
-    res.render('create')
+    if (req.session.user) {
+        res.render('create')
+    } else {
+        res.status(401).send({message: "Session inactive or expired. Please log in!"})
+    }
 }
 
 const updateArticle = (req, res) => {
-    if (req.method === "POST") {
-        // POST
-        if (req.body.action !== "erase") {
-            let query = `UPDATE article
-                         SET name='${req.body.name}',
-                             slug='${req.body.slug}',
-                             image='${req.body.image}',
-                             body='${req.body.body}',
-                             author_id=${req.body.author}
-                         WHERE id = ${req.params.id}`;
-            con.query(query, (err, result) => {
-                if (err) throw err
-                res.redirect("/")
-            })
-        } else {
-            let query = `DELETE FROM article WHERE id = ${req.params.id}`;
-            con.query(query, (err, result) => {
-                if (err) throw err
-                res.redirect("/")
+    if (req.session.user) {
+        if (req.method === "POST") {
+            // POST
+            if (req.body.action !== "erase") {
+                let query = `UPDATE article
+                             SET name='${req.body.name}',
+                                 slug='${req.body.slug}',
+                                 image='${req.body.image}',
+                                 body='${req.body.body}',
+                                 author_id=${req.body.author}
+                             WHERE id = ${req.params.id}`;
+                con.query(query, (err, result) => {
+                    if (err) throw err
+                    res.redirect("/")
+                })
+            } else {
+                let query = `DELETE
+                             FROM article
+                             WHERE id = ${req.params.id}`;
+                con.query(query, (err, result) => {
+                    if (err) throw err
+                    res.redirect("/")
+                })
+            }
+        } else if (req.method === "GET") {
+            // GET
+            Article.getById(req.params.id, (err, data) => {
+                if (err) {
+                    res.status(500).send({message: err.message || "Error occurred while getting article data"})
+                }
+                Author.getAll((err2, authors) => {
+                    if (err2) {
+                        res.status(500).send({message: err2.message || "Error occurred while getting author data"})
+                    }
+                    res.render('edit', {article: data, authors: authors})
+                })
             })
         }
-    } else if (req.method === "GET") {
-        // GET
-        Article.getById(req.params.id, (err, data) => {
-            if (err) {
-                res.status(500).send({message: err.message || "Error occurred while getting article data"})
-            }
-            Author.getAll((err2, authors) => {
-                if (err2) {
-                    res.status(500).send({message: err2.message || "Error occurred while getting author data"})
-                }
-                res.render('edit', {article: data, authors: authors})
-            })
-        })
+    } else {
+        res.status(401).send({message: "Session inactive or expired. Please log in!"})
     }
 }
 
